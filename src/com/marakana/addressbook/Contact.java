@@ -2,15 +2,23 @@
 package com.marakana.addressbook;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class Contact implements Serializable {
+
+    private static final long serialVersionUID = 8972079108707981970L;
+
     private String firstName;
 
     private String lastName;
 
+    private transient String name;
+
     private final String email;
 
     private String phone;
+
+    private Date dateOfBirth;
 
     public Contact(String email) {
         if (email == null) {
@@ -31,6 +39,7 @@ public class Contact implements Serializable {
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+        this.name = null;
     }
 
     public String getLastName() {
@@ -39,6 +48,14 @@ public class Contact implements Serializable {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+        this.name = null;
+    }
+
+    public String getName() {
+        if (this.name == null) {
+            this.name = this.getFirstName() + " " + this.getLastName();
+        }
+        return this.name;
     }
 
     public String getPhone() {
@@ -51,6 +68,14 @@ public class Contact implements Serializable {
 
     public String getEmail() {
         return this.email;
+    }
+
+    public Date getDateOfBirth() {
+        return this.dateOfBirth;
+    }
+
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
     @Override
@@ -90,6 +115,9 @@ public class Contact implements Serializable {
         out.append('<').append(this.getEmail()).append('>');
         if (this.getPhone() != null) {
             out.append(' ').append(this.getPhone());
+        }
+        if (this.getDateOfBirth() != null) {
+            out.append(' ').append(this.getDateOfBirth()); // ignore I18N
         }
         return out.toString();
     }

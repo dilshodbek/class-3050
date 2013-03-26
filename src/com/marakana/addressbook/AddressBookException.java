@@ -3,7 +3,7 @@ package com.marakana.addressbook;
 
 public class AddressBookException extends Exception {
 
-    private static final long serialVersionUID = -5404157887713123901L;
+    private static final long serialVersionUID = -3290268082791056316L;
 
     public AddressBookException(String message) {
         super(message);

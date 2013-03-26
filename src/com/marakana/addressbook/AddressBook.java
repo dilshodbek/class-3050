@@ -1,6 +1,8 @@
 
 package com.marakana.addressbook;
 
+import java.util.List;
+
 public interface AddressBook {
 
     /**
@@ -17,10 +19,10 @@ public interface AddressBook {
     /**
      * Get all contacts
      * 
-     * @return all contacts
+     * @return all contacts sorted by first name, then last name
      * @throws AddressBookException if there is a problem getting contacts
      */
-    public Contact[] getAll() throws AddressBookException;
+    public List<Contact> getAll() throws AddressBookException;
 
     /**
      * Store a contact

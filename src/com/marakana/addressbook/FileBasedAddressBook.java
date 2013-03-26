@@ -10,6 +10,8 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -71,12 +73,13 @@ public class FileBasedAddressBook implements AddressBook {
     }
 
     @Override
-    public Contact[] getAll() throws AddressBookException {
+    public List<Contact> getAll() throws AddressBookException {
         File[] files = this.dir.listFiles(FILE_FILTER);
-        Contact[] contacts = new Contact[files.length];
-        for (int i = 0; i < contacts.length; i++) {
-            contacts[i] = this.getContactForFile(files[i]);
+        List<Contact> contacts = new ArrayList<>(files.length);
+        for (int i = 0; i < files.length; i++) {
+            contacts.add(this.getContactForFile(files[i]));
         }
+        // TODO: sort???
         return contacts;
     }
 

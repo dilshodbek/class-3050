@@ -7,6 +7,7 @@ public class FileBasedAddressBookFactory implements AddressBookFactory {
 
     private File dir;
 
+    @Required
     public void setDir(String dir) {
         this.dir = new File(dir);
     }

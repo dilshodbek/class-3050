@@ -3,7 +3,6 @@ package com.marakana.addressbook;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.lang.reflect.Method;
 
 public class Main {
     private static final String USAGE = "Usage: Main <address-book-factory-class> <prop-name>=<prop-value>";
@@ -25,19 +24,17 @@ public class Main {
             return;
         }
 
-        Class<?> clazz = Class.forName(args[0]);
-        AddressBookFactory addressBookFactory = (AddressBookFactory) clazz.newInstance();
-
+        AddressBookFactory.Builder builder = new AddressBookFactory.Builder(args[0]);
         for (int i = 1; i < args.length; i++) {
-            String[] prop = args[i].split("=");
-            String methodName = "set" + Character.toUpperCase(prop[0].charAt(0))
-                    + prop[0].substring(1);
-            Method method = clazz.getMethod(methodName, String.class);
-            method.invoke(addressBookFactory, prop[1]);
+            try {
+                builder.setProperty(args[i]);
+            } catch (IllegalArgumentException e) {
+                System.err.println("ERROR: " + e.getMessage());
+                System.err.println(USAGE);
+                return;
+            }
         }
-
-        AddressBook addressBook = addressBookFactory.getAddressBook();
-
+        AddressBook addressBook = builder.getAddressBookFactory().getAddressBook();
         System.out.print(PROMPT);
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String line;

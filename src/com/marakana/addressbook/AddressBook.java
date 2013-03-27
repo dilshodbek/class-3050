@@ -19,7 +19,7 @@ public interface AddressBook {
     /**
      * Get all contacts
      * 
-     * @return all contacts sorted by first name, then last name
+     * @return all contacts sorted by first name, then last name, then email
      * @throws AddressBookException if there is a problem getting contacts
      */
     public List<Contact> getAll() throws AddressBookException;

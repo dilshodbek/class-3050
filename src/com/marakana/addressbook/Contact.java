@@ -2,11 +2,40 @@
 package com.marakana.addressbook;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.Date;
 
-public class Contact implements Serializable {
+public class Contact implements Serializable, Comparable<Contact> {
 
     private static final long serialVersionUID = 8972079108707981970L;
+
+    public static final Comparator<Contact> FIRST_NAME_COMPARATOR = new Comparator<Contact>() {
+        @Override
+        public int compare(Contact c1, Contact c2) {
+            return Util.compare(c1.getFirstName(), c2.getFirstName());
+        }
+    };
+
+    public static final Comparator<Contact> LAST_NAME_COMPARATOR = new Comparator<Contact>() {
+        @Override
+        public int compare(Contact c1, Contact c2) {
+            return Util.compare(c1.getLastName(), c2.getLastName());
+        }
+    };
+
+    public static final Comparator<Contact> EMAIL_COMPARATOR = new Comparator<Contact>() {
+        @Override
+        public int compare(Contact c1, Contact c2) {
+            return c1.compareTo(c2);
+        }
+    };
+
+    public static final Comparator<Contact> DATE_OF_BIRTH_COMPARATOR = new Comparator<Contact>() {
+        @Override
+        public int compare(Contact c1, Contact c2) {
+            return Util.compare(c1.getDateOfBirth(), c2.getDateOfBirth());
+        }
+    };
 
     private String firstName;
 
@@ -23,6 +52,10 @@ public class Contact implements Serializable {
     public Contact(String email) {
         if (email == null) {
             throw new NullPointerException("Email must not be null");
+        } else if (email.isEmpty()) {
+            throw new IllegalArgumentException("Email must not be empty");
+        } else if (!email.matches("[a-zA-Z0-9\\.\\-\\_]+@[a-zA-Z0-9\\.\\-\\_]+")) {
+            throw new IllegalArgumentException("Invalid email [" + email + "]");
         }
         this.email = email;
     }
@@ -121,4 +154,10 @@ public class Contact implements Serializable {
         }
         return out.toString();
     }
+
+    @Override
+    public int compareTo(Contact that) {
+        return this.getEmail().compareTo(that.getEmail());
+    }
+
 }

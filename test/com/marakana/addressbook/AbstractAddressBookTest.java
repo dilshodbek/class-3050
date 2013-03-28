@@ -1,7 +1,10 @@
 
 package com.marakana.addressbook;
 
-import junit.framework.Assert;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
+
+import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
@@ -14,6 +17,27 @@ public abstract class AbstractAddressBookTest {
 
     protected void tearDown(AddressBook addressBook) throws Exception {
 
+    }
+
+    protected Contact getJohnSmith() {
+        return new ContactBuilder("john@smith.com").withFirstName("John").withLastName("Smith")
+                .withPhone("+14156477000").build();
+    }
+
+    protected <T> void assertEqualsOrNull(T expected, T actual) {
+        if (expected == null) {
+            assertNull(actual);
+        } else {
+            assertEquals(expected, actual);
+        }
+    }
+
+    protected void assertEqualsContacts(Contact expected, Contact actual) {
+        assertEqualsOrNull(expected.getFirstName(), actual.getFirstName());
+        assertEqualsOrNull(expected.getLastName(), actual.getLastName());
+        assertEquals(expected.getEmail(), actual.getEmail());
+        assertEqualsOrNull(expected.getPhone(), actual.getPhone());
+        assertEqualsOrNull(expected.getDateOfBirth(), actual.getDateOfBirth());
     }
 
     @Before
@@ -30,12 +54,9 @@ public abstract class AbstractAddressBookTest {
 
     @Test
     public void testStore() throws AddressBookException {
-        String email = "john@smith.com";
-        Contact contact = new Contact(email);
+        Contact contact = getJohnSmith();
         this.addressBook.store(contact);
-        Contact other = this.addressBook.getByEmail(email);
-        Assert.assertEquals(contact, other);
-        Assert.assertEquals(1, this.addressBook.getAll().size());
+        this.assertEqualsContacts(contact, this.addressBook.getByEmail(contact.getEmail()));
     }
 
     @Test(expected = NullPointerException.class)
@@ -44,27 +65,12 @@ public abstract class AbstractAddressBookTest {
     }
 
     @Test
-    public void testStoreNullFirstName() throws AddressBookException {
-        Contact contact = new ContactBuilder("john@smith.com").withLastName("Smith")
-                .withPhone("1234").build();
+    public void testListOfOne() throws AddressBookException {
+        Contact contact = getJohnSmith();
         this.addressBook.store(contact);
-        testEqualsComplete(contact, this.addressBook.getByEmail(contact.getEmail()));
-    }
-
-    @Test
-    public void testStoreNullLastName() throws AddressBookException {
-        Contact contact = new ContactBuilder("john@smith.com").withFirstName("John")
-                .withPhone("1234").build();
-        this.addressBook.store(contact);
-        testEqualsComplete(contact, this.addressBook.getByEmail(contact.getEmail()));
-    }
-
-    private void testEqualsComplete(Contact expected, Contact actual) {
-        Assert.assertEquals(expected.getFirstName(), actual.getFirstName());
-        Assert.assertEquals(expected.getLastName(), actual.getLastName());
-        Assert.assertEquals(expected.getEmail(), actual.getEmail());
-        Assert.assertEquals(expected.getPhone(), actual.getPhone());
-        Assert.assertEquals(expected.getDateOfBirth(), actual.getDateOfBirth());
+        List<Contact> contacts = this.addressBook.getAll();
+        assertEquals(1, contacts.size());
+        assertEqualsContacts(contact, contacts.get(0));
     }
 
     @Test
@@ -73,12 +79,12 @@ public abstract class AbstractAddressBookTest {
         Contact contact = new Contact(email);
         this.addressBook.store(contact);
         this.addressBook.deleteByEmail(email);
-        Assert.assertNull(this.addressBook.getByEmail(email));
-        Assert.assertEquals(0, this.addressBook.getAll().size());
+        assertNull(this.addressBook.getByEmail(email));
+        assertEquals(0, this.addressBook.getAll().size());
     }
 
     @Test(expected = NullPointerException.class)
-    public void testDeleteByEmailWithNull() throws AddressBookException {
+    public void testDeleteByNullEmail() throws AddressBookException {
         this.addressBook.deleteByEmail(null);
     }
 }

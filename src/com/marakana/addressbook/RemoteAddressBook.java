@@ -10,6 +10,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+//TODO: known issue, does not support null/empty first name, last name, and phone
 public class RemoteAddressBook implements AddressBook {
     private static final String EXPECTED_PROMPT = "address-book> ";
 
@@ -35,7 +36,7 @@ public class RemoteAddressBook implements AddressBook {
 
     @Override
     public Contact getByEmail(String email) throws AddressBookException {
-        List<String> response = this.request("get %s\n", email);
+        List<String> response = this.request("get %s\n", Util.notNull(email, "Email"));
         return response.isEmpty() ? null : Contact.parse(response.get(0));
     }
 
@@ -58,7 +59,7 @@ public class RemoteAddressBook implements AddressBook {
 
     @Override
     public void deleteByEmail(String email) throws AddressBookException {
-        this.request("delete %s\n", email);
+        this.request("delete %s\n", Util.notNull(email, "Email"));
     }
 
     private List<String> request(String request, Object... args) throws AddressBookException {

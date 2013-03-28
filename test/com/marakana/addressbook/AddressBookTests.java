@@ -7,7 +7,8 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-        ContactTest.class, FileBasedAddressBookTest.class, InMemoryAddressBookTest.class
+        ContactTest.class, FileBasedAddressBookTest.class, InMemoryAddressBookTest.class,
+        RemoteAddressBookTest.class
 })
 public class AddressBookTests {
 

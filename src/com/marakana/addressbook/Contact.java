@@ -12,7 +12,7 @@ public class Contact implements Serializable, Comparable<Contact> {
     private static final long serialVersionUID = 8972079108707981970L;
 
     private static final Pattern PARSE_PATTERN = Pattern
-            .compile("([^ ]+) ([^ ]+) <([^> ]+)>(?: \\(([^ ]+)\\))?");
+            .compile("(?:([^ ]+) )?(?:([^ ]+) )?<([^> ]+)>(?: \\(([^ ]+)\\))?");
 
     public static Contact parse(String in) {
         Matcher m = PARSE_PATTERN.matcher(in);

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+// TODO: change the protocol to support null/empty first and last names 
 public class RemoteAddressBookServer implements Runnable {
 
     private static final String USAGE = "RemoteAddressBookServer <port> <max-clients> <address-book-factory-type> <prop-name>=<prop-value> ...";
@@ -40,7 +41,6 @@ public class RemoteAddressBookServer implements Runnable {
         AddressBook addressBook = builder.getAddressBookFactory().getAddressBook();
         ServerSocket serverSocket = new ServerSocket(port);
         ExecutorService executorService = Executors.newFixedThreadPool(maxClients);
-        System.out.println("Listening on port " + port);
         final RemoteAddressBookServer server = new RemoteAddressBookServer(addressBook,
                 serverSocket, executorService);
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
@@ -74,8 +74,6 @@ public class RemoteAddressBookServer implements Runnable {
         while (this.serverSocket.isBound() && !this.serverSocket.isClosed()) {
             try {
                 Socket clientSocket = serverSocket.accept();
-                System.out.println("Handling connection from "
-                        + clientSocket.getRemoteSocketAddress());
                 this.executorService.execute(new Handler(addressBook, clientSocket));
             } catch (SocketException e) {
                 if (this.serverSocket.isClosed()) {
@@ -89,12 +87,9 @@ public class RemoteAddressBookServer implements Runnable {
                 e.printStackTrace();
             }
         }
-        System.out.println("Good-bye");
-
     }
 
     public void shutdown() throws IOException {
-        System.out.println("Shutting-down");
         this.serverSocket.close();
         List<Runnable> pendingHandlers = this.executorService.shutdownNow();
         for (Runnable pendingHandler : pendingHandlers) {
@@ -114,7 +109,6 @@ public class RemoteAddressBookServer implements Runnable {
         }
 
         public void shutdown() {
-            System.out.println("Shutting down socket " + socket.getRemoteSocketAddress());
             try {
                 this.socket.close();
             } catch (IOException e) {

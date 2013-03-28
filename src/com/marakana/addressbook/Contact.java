@@ -4,10 +4,24 @@ package com.marakana.addressbook;
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Contact implements Serializable, Comparable<Contact> {
 
     private static final long serialVersionUID = 8972079108707981970L;
+
+    private static final Pattern PARSE_PATTERN = Pattern
+            .compile("([^ ]+) ([^ ]+) <([^> ]+)>(?: \\(([^ ]+)\\))?");
+
+    public static Contact parse(String in) {
+        Matcher m = PARSE_PATTERN.matcher(in);
+        if (m.matches()) {
+            return new Contact(m.group(1), m.group(2), m.group(3), m.group(4));
+        } else {
+            throw new IllegalArgumentException("Invalid input string: " + in);
+        }
+    }
 
     public static final Comparator<Contact> FIRST_NAME_COMPARATOR = new Comparator<Contact>() {
         @Override
@@ -64,6 +78,11 @@ public class Contact implements Serializable, Comparable<Contact> {
         this(email);
         this.setFirstName(firstName);
         this.setLastName(lastName);
+    }
+
+    public Contact(String firstName, String lastName, String email, String phone) {
+        this(firstName, lastName, email);
+        this.setPhone(phone);
     }
 
     public String getFirstName() {
@@ -147,7 +166,7 @@ public class Contact implements Serializable, Comparable<Contact> {
         }
         out.append('<').append(this.getEmail()).append('>');
         if (this.getPhone() != null) {
-            out.append(' ').append(this.getPhone());
+            out.append(" (").append(this.getPhone()).append(")");
         }
         if (this.getDateOfBirth() != null) {
             out.append(' ').append(this.getDateOfBirth()); // ignore I18N

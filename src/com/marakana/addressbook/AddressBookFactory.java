@@ -31,7 +31,7 @@ public interface AddressBookFactory {
                 this.clazz = (Class<AddressBookFactory>) Class.forName(addressBookFactoryType);
                 this.addressBookFactory = this.clazz.newInstance();
 
-                for (Method method : clazz.getDeclaredMethods()) {
+                for (Method method : clazz.getMethods()) {
                     String name = method.getName();
                     if (name.startsWith("set") && method.getParameterTypes().length == 1
                             && method.getParameterTypes()[0] == String.class
@@ -69,6 +69,11 @@ public interface AddressBookFactory {
             }
         }
 
+        /**
+         * @param property the property to set in &lt;name&gt;=&lt;value&gt;
+         *            format
+         * @throws AddressBookException
+         */
         public void setProperty(String property) throws AddressBookException {
             Matcher m = PROP_PATTERN.matcher(property);
             if (m.matches()) {
